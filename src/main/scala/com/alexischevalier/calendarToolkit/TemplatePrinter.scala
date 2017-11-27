@@ -47,17 +47,25 @@ object TemplatePrinter {
 
   def printDaysRecursively(offsetDay: Int, nextDayNumber: Int, firstDayOfWeek: Int, daysInMonth: Int): Unit = {
     if (firstDayOfWeek > offsetDay) { // Clears additional previously existing entries in InDesign before the end
-      print("\t")
+      printPlaceHolderTab(offsetDay)
       printDaysRecursively(offsetDay + 1, nextDayNumber, firstDayOfWeek, daysInMonth)
     } else if (nextDayNumber <= daysInMonth) { // Prints the actual days of the month
-      print(s"$nextDayNumber")
-      if (offsetDay % 7 == 0) print("\n")
-      else print("\t")
+      printDay(nextDayNumber, offsetDay)
       printDaysRecursively(offsetDay + 1, nextDayNumber + 1, firstDayOfWeek, daysInMonth)
     } else if (offsetDay <= offsetEnd) { // Clears additional previously existing entries in InDesign after the end
-      if (offsetDay % 7 == 0) print("\n")
-      else print("\t")
+      printPlaceHolderTab(offsetDay)
       printDaysRecursively(offsetDay + 1, nextDayNumber, firstDayOfWeek, daysInMonth)
     }
+  }
+
+  def printPlaceHolderTab(offsetDay: Int): Unit = {
+    if (offsetDay % 7 == 0) print("\n")
+    else print("\t")
+  }
+
+  def printDay(nextDayNumber: Int, offsetDay: Int): Unit = {
+    print(s"$nextDayNumber")
+    if (offsetDay % 7 == 0) print("\n")
+    else print("\t")
   }
 }
