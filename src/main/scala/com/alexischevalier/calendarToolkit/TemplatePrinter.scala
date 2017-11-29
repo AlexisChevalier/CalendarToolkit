@@ -21,11 +21,11 @@ object TemplatePrinter {
   private val DaysPerWeek = 7
   private val offsetEnd: Int = DaysPerWeek * MaximumDisplayedWeeks
 
-  def printTabbedTemplates(year: Int): Unit = {
+  def printTabbedTemplates(config: Config): Unit = {
     (1 to 12).foreach(month => {
       printMonthName(month)
       printDaysHeader()
-      printMonth(month, year)
+      printMonth(month, config.year.get)
     })
   }
 
