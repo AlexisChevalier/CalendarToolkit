@@ -1,15 +1,30 @@
 package com.alexischevalier.calendarToolkit
 
 import java.io.File
-import java.net.URI
 
+import akka.actor.{Actor, Props}
 import com.sksamuel.scrimage.Image
 import com.sksamuel.scrimage.nio.JpegWriter
 
-class CalendarGenerator(config: Config) {
-  import CalendarGenerator._
+class CalendarMaker extends Actor {
+  import CalendarMaker._
 
-  def generateCalendarForImage(image: File): Unit = {
+  override def receive: Receive = {
+    case GenerateCalendar(config, filePath) =>
+      generateCalendarForImage(new File(filePath), config)
+      sender() ! CalendarDone(filePath)
+  }
+}
+
+object CalendarMaker {
+  case class GenerateCalendar(config: Config, filePath: String)
+  case class CalendarDone(filePath: String)
+
+  def props() = Props(new CalendarMaker)
+
+  case class Dimensions(width: Int, height: Int)
+
+  def generateCalendarForImage(image: File, config: Config): Unit = {
     def fileFromPath(path: String): File = {
       new File(path)
     }
@@ -57,8 +72,4 @@ class CalendarGenerator(config: Config) {
 
     println(s"Calendar ${standardizeName(image)} done.")
   }
-}
-
-object CalendarGenerator {
-  case class Dimensions(width: Int, height: Int)
 }

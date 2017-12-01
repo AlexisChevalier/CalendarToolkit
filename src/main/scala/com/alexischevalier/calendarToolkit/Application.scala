@@ -1,7 +1,16 @@
 package com.alexischevalier.calendarToolkit
 
+import akka.actor.ActorSystem
+import com.alexischevalier.calendarToolkit.CalendarGeneratorOrchestrator.{GenerateCalendars, GenerationCompleted}
+import com.alexischevalier.calendarToolkit.IndesignTemplatePrinter.{PrintCompleted, PrintLayout}
 import org.joda.time.DateTime
+import akka.pattern.ask
+import akka.util.Timeout
 import scopt.OptionParser
+import scala.concurrent.duration._
+import scala.language.postfixOps
+
+import scala.concurrent.ExecutionContextExecutor
 
 object Application extends App {
 
@@ -72,9 +81,21 @@ object Application extends App {
       case _ => return
     }
 
+    val actorSystem = ActorSystem("calendar-toolkit")
+    implicit val executionContext: ExecutionContextExecutor = actorSystem.dispatcher
+    implicit val timeout: Timeout = Timeout(10 minutes)
+
     programConfig.mode match {
-      case Some("layout") => TemplatePrinter.printTabbedTemplates(programConfig)
-      case Some("generate") => new BulkCalendarManager(programConfig).generateCalendars()
+      case Some("layout") =>
+        actorSystem.actorOf(IndesignTemplatePrinter.props(), "templatePrinter") ? PrintLayout(programConfig) map {
+          case PrintCompleted =>
+            actorSystem.terminate()
+        }
+      case Some("generate") =>
+        actorSystem.actorOf(CalendarGeneratorOrchestrator.props(), "calendarGeneratorOrchestrator") ? GenerateCalendars(programConfig) map {
+          case GenerationCompleted =>
+            actorSystem.terminate()
+        }
       case _ => println("Unknown command")
     }
   }
