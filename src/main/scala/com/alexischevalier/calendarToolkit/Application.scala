@@ -74,7 +74,7 @@ object Application extends App {
 
     programConfig.mode match {
       case Some("layout") => TemplatePrinter.printTabbedTemplates(programConfig)
-      case Some("generate") => CalendarGenerator.test(programConfig)
+      case Some("generate") => new BulkCalendarManager(programConfig).generateCalendars()
       case _ => println("Unknown command")
     }
   }

@@ -64,7 +64,6 @@ object TemplatePrinter {
   }
 
   def printDay(nextDayNumber: Int, offsetDay: Int): Unit = {
-    print(s"$nextDayNumber")
     if (offsetDay % 7 == 0) print("\n")
     else print("\t")
   }
