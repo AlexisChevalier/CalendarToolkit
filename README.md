@@ -1,6 +1,11 @@
 # CalendarToolkit
 Simple command line tools used to help generate and make calendars for a local sports association
 
+# Build
+`sbt assembly`
+
+# Run
+`java -jar CalendarToolkit-assembly-x.x.jar <arguments>`
 
 # Usage
 

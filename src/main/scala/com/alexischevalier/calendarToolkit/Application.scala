@@ -67,7 +67,7 @@ object Application extends App {
           opt[Int]("numberOfGenerators").required()
           .abbr("ng")
           .text("Number of parallel generators")
-          .action((generatorThreads, config) => config.copy(generatorThreads = Some(generatorThreads)))
+          .action((generatorCount, config) => config.copy(generatorCount = Some(generatorCount)))
       )
 
     checkConfig(config =>
@@ -116,5 +116,5 @@ case class Config(
                    frameHeight: Option[Int] = None,
                    frameOffsetX: Option[Int] = None,
                    frameOffsetY: Option[Int] = None,
-                   generatorThreads: Option[Int] = Some(1)
+                   generatorCount: Option[Int] = Some(1)
                  )

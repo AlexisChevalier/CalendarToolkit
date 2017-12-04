@@ -4,7 +4,7 @@ import java.io.File
 import javax.activation.MimetypesFileTypeMap
 
 import akka.actor.{Actor, ActorRef, Props}
-import akka.routing.FromConfig
+import akka.routing.{FromConfig, RoundRobinPool}
 import com.alexischevalier.calendarToolkit.CalendarMaker.{CalendarDone, GenerateCalendar}
 
 import scala.util.{Failure, Success, Try}
@@ -12,14 +12,14 @@ import scala.util.{Failure, Success, Try}
 class CalendarGeneratorOrchestrator extends Actor {
   import CalendarGeneratorOrchestrator._
 
-  val calendarMakerRouter: ActorRef =
-    context.actorOf(FromConfig.props(CalendarMaker.props()), "calendarMakerRouter")
+  var calendarMakerRouter: ActorRef = _
 
   var jobs: Set[String] = Set[String]()
   var parentRef: ActorRef = _
 
   override def receive: Receive = {
     case GenerateCalendars(config) =>
+      calendarMakerRouter = context.actorOf(RoundRobinPool(config.generatorCount.get).props(CalendarMaker.props()), "calendarMakerRouter")
       parentRef = sender()
       generateCalendarTasks(config) match {
         case Success(tasks) =>
