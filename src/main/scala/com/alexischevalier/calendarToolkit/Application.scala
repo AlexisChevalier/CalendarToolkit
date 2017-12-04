@@ -62,7 +62,12 @@ object Application extends App {
         opt[Int]("frameOffsetY").required()
           .abbr("foy")
           .text("Picture frame offset on Y axis")
-          .action((givenFrameOffsetY, config) => config.copy(frameOffsetY = Some(givenFrameOffsetY)))
+          .action((givenFrameOffsetY, config) => config.copy(frameOffsetY = Some(givenFrameOffsetY))),
+
+          opt[Int]("numberOfGenerators").required()
+          .abbr("ng")
+          .text("Number of parallel generators")
+          .action((generatorThreads, config) => config.copy(generatorThreads = Some(generatorThreads)))
       )
 
     checkConfig(config =>
@@ -111,4 +116,5 @@ case class Config(
                    frameHeight: Option[Int] = None,
                    frameOffsetX: Option[Int] = None,
                    frameOffsetY: Option[Int] = None,
+                   generatorThreads: Option[Int] = Some(1)
                  )

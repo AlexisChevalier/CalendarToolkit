@@ -33,7 +33,7 @@ object IndesignTemplatePrinter {
     11 -> "Novembre",
     12 -> "Décembre"
   )
-  private val monthInitials = List("J","F","M","A","M","J","J","A","S","O","N","D")
+  private val daysInitials = List("L","M","M","J","V","S","D")
   private val MaximumDisplayedWeeks = 6
   private val DaysPerWeek = 7
   private val offsetEnd: Int = DaysPerWeek * MaximumDisplayedWeeks
@@ -43,7 +43,7 @@ object IndesignTemplatePrinter {
       println(monthNamesMap.getOrElse(month, ""))
 
     def printDaysHeader(): Unit =
-      println(monthInitials.mkString("\t"))
+      println(daysInitials.mkString("\t"))
 
     def printMonth(month: Int, year: Int): Unit = {
       val date = new DateTime(year, month, 1, 0, 0)
@@ -72,6 +72,7 @@ object IndesignTemplatePrinter {
     }
 
     def printDay(nextDayNumber: Int, offsetDay: Int): Unit = {
+      print(nextDayNumber)
       if (offsetDay % 7 == 0) print("\n")
       else print("\t")
     }

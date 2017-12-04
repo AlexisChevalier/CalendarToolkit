@@ -16,10 +16,11 @@ class CalendarGeneratorOrchestrator extends Actor {
     context.actorOf(FromConfig.props(CalendarMaker.props()), "calendarMakerRouter")
 
   var jobs: Set[String] = Set[String]()
-  val owner: ActorRef = sender()
+  var parentRef: ActorRef = _
 
   override def receive: Receive = {
     case GenerateCalendars(config) =>
+      parentRef = sender()
       generateCalendarTasks(config) match {
         case Success(tasks) =>
           jobs = tasks.map(t => t.filePath).toSet
@@ -32,7 +33,7 @@ class CalendarGeneratorOrchestrator extends Actor {
       jobs = jobs - jobPath
       if (jobs.isEmpty) {
         println(s"Calendar generation completed, exiting")
-        owner ! GenerationCompleted
+        parentRef ! GenerationCompleted
       }
   }
 }

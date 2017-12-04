@@ -64,7 +64,9 @@ object CalendarMaker {
       s"${config.outputFolder.get}\\${standardizeName(file)}"
 
     def standardizeName(file: File): String =
-      file.getName.replaceAll("\\s", "")
+      file.getName
+        .replaceAll("\\s", "_")
+        .replaceAll(",", "_")
 
     Image.fromFile(fileFromPath(config.templateFile.get))
       .overlay(buildOverlayImage(image),config.frameOffsetX.get, config.frameOffsetY.get)
